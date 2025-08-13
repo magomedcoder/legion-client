@@ -1,52 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:legion/domain/usecases/start_voice_stream.dart';
-import 'package:legion/domain/usecases/stop_voice_stream.dart';
-import 'package:legion/presentation/widgets/audio_player_widget.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:legion/presentation/bloc/chat_bloc.dart';
+import 'package:legion/presentation/bloc/chat_state.dart';
+import 'package:legion/presentation/widgets/chat_bubble.dart';
+import 'package:legion/presentation/widgets/chat_input_bar.dart';
 
 class HomeScreen extends StatefulWidget {
-  final StartVoiceStream startVoice;
-  final StopVoiceStream stopVoice;
-
-  const HomeScreen({
-    super.key,
-    required this.startVoice,
-    required this.stopVoice,
-  });
+  const HomeScreen({super.key});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool isRecording = false;
-  String? wavBase64;
-
-  void _toggleRecording() async {
-    if (isRecording) {
-      await widget.stopVoice();
-    } else {
-      await widget.startVoice((result) {
-        setState(() {
-          wavBase64 = result.wavBase64;
-        });
-      });
-    }
-
-    setState(() => isRecording = !isRecording);
-  }
+  final _controller = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Легион')),
-      body: Column(
-        children: [
-          ElevatedButton(
-            onPressed: _toggleRecording,
-            child: Text(isRecording ? "Остановить" : "Говорить"),
-          ),
-          if (wavBase64 != null) AudioPlayerWidget(base64Str: wavBase64!),
-        ],
+      appBar: AppBar(title: const Text('Легион')),
+      body: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: BlocBuilder<ChatBloc, ChatState>(
+                builder: (context, state) {
+                  return ListView.builder(
+                    reverse: false,
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    itemCount: state.messages.length,
+                    itemBuilder: (_, i) =>
+                        ChatBubble(message: state.messages[i]),
+                  );
+                },
+              ),
+            ),
+            const Divider(height: 1),
+            ChatInputBar(controller: _controller),
+          ],
+        ),
       ),
     );
   }

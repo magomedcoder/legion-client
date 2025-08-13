@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:legion/data/data_sources/voice_remote_datasource.dart';
-import 'package:legion/data/repositories/voice_repository_impl.dart';
-import 'package:legion/domain/usecases/start_voice_stream.dart';
-import 'package:legion/domain/usecases/stop_voice_stream.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:legion/di/injector.dart' as di;
+import 'package:legion/presentation/bloc/chat_bloc.dart';
 import 'package:legion/presentation/screens/home_screen.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await di.init();
+
   runApp(const App());
 }
 
@@ -14,14 +16,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dataSource = WebSocketVoiceRemoteDataSource();
-    final repository = VoiceRepositoryImpl(dataSource);
-    final startUseCase = StartVoiceStream(repository);
-    final stopUseCase = StopVoiceStream(repository);
-
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Легион',
-      home: HomeScreen(startVoice: startUseCase, stopVoice: stopUseCase),
+      home: MultiBlocProvider(
+        providers: [BlocProvider(create: (context) => di.sl<ChatBloc>())],
+        child: const HomeScreen(),
+      ),
     );
   }
 }

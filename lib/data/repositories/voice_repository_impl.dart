@@ -1,13 +1,13 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:legion/data/data_sources/voice_remote_datasource.dart';
+import 'package:legion/data/data_sources/ws_remote_datasource.dart';
 import 'package:legion/domain/entities/voice_result.dart';
 import 'package:legion/domain/repositories/voice_repository.dart';
 import 'package:record/record.dart';
 
 class VoiceRepositoryImpl implements VoiceRepository {
-  final VoiceRemoteDataSource remote;
+  final WsRemoteDataSource remote;
 
   VoiceRepositoryImpl(this.remote);
 
@@ -20,21 +20,24 @@ class VoiceRepositoryImpl implements VoiceRepository {
       throw Exception("Нет разрешения на использование микрофона");
     }
 
-    remote.connect().listen((event) {
+    remote.connectStream().listen((event) {
       final json = jsonDecode(event);
-      final result = VoiceResult(
-        wavBase64: json['wav_base64'],
-      );
+      final result = VoiceResult(wavBase64: json['wav_base64']);
       onResult(result);
     });
 
     final stream = await _recorder.startStream(
-      RecordConfig(encoder: AudioEncoder.pcm16bits, sampleRate: 48000),
+      RecordConfig(
+        encoder: AudioEncoder.pcm16bits,
+        sampleRate: 48000,
+        numChannels: 1,
+        bitRate: 128000,
+      ),
     );
 
     _streamSub = stream;
     _streamSub!.listen((data) {
-      remote.send(data);
+      remote.sendBytes(data);
     });
   }
 

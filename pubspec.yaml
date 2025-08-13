@@ -37,6 +37,10 @@ dependencies:
   record: ^6.0.0
   web_socket_channel: ^3.0.3
   audioplayers: ^6.5.0
+  flutter_bloc: ^9.1.1
+  equatable: ^2.0.7
+  get_it: ^8.2.0
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:
