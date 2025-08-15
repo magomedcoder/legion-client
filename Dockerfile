@@ -5,9 +5,9 @@ ARG ANDROID_PLATFORM=android-35
 ARG ANDROID_BUILD_TOOLS=35.0.0
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt install -y --no-install-recommends ca-certificates build-essential curl git \
-    unzip xz-utils zip clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 \
-    openjdk-17-jdk-headless libglu1-mesa libgtk-3-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev\
+RUN apt update && apt install -y --no-install-recommends curl git unzip xz-utils zip \
+    ca-certificates build-essential clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
+    libstdc++6 openjdk-17-jdk-headless libglu1-mesa \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -18,7 +18,6 @@ ENV ANDROID_HOME=/opt/android-sdk ANDROID_SDK_ROOT=/opt/android-sdk
 ENV PATH="/opt/flutter/bin:/opt/flutter/bin/cache/dart-sdk/bin:/opt/android-sdk/cmdline-tools/latest/bin:/opt/android-sdk/platform-tools:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
 RUN flutter config --enable-linux-desktop --no-analytics \
-  && flutter --version && dart --version \
   && flutter precache --linux
 
 RUN mkdir -p ${ANDROID_HOME}/cmdline-tools \
@@ -64,49 +63,5 @@ CMD bash -lc '\
     fi; \
 
     echo "Linux: build/linux/x64/release/bundle/"; \
-    echo "Android APK: build/app/outputs/flutter-apk/app-release.apk"; \
+    echo "Android APK:  build/app/outputs/flutter-apk/app-release.apk"; \
 '
-
-# Windows
-
-FROM mcr.microsoft.com/windows:ltsc2019 AS windows-base
-
-SHELL ["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command"]
-
-RUN iwr https://community.chocolatey.org/install.ps1 -UseBasicParsing | iex
-
-RUN choco install -y git cmake ninja python3 unzip curl 7zip
-
-RUN choco install -y visualstudio2022buildtools \
-    --package-parameters "`"\
-    --quiet --wait --norestart --nocache \
-    --add Microsoft.Component.MSBuild \
-    --add Microsoft.VisualStudio.Workload.VCTools \
-    --add Microsoft.VisualStudio.Component.VC.Tools.x86.x64 \
-    --add Microsoft.VisualStudio.Component.VC.CMake.Project \
-    --add Microsoft.VisualStudio.Component.Windows10SDK.19041 \
-    --add Microsoft.VisualStudio.Component.Windows11SDK.22000 \
-`""
-
-RUN git clone --depth=1 -b stable https://github.com/flutter/flutter.git C:\flutter
-
-ENV PATH=C:\flutter\bin;C:\flutter\bin\cache\dart-sdk\bin;%PATH%
-
-RUN flutter config --enable-windows-desktop --no-analytics \
-    && flutter --version && dart --version
-
-FROM windows-base AS windows-build
-
-WORKDIR C:\legion
-
-COPY . .
-
-RUN flutter pub get
-
-CMD powershell -NoProfile -Command "\
-    flutter pub get; \
-    Write-Host '==> Building Windows desktop'; \
-    flutter build windows --release; \
-    Write-Host ''; \
-    Write-Host 'Windows: build\\windows\\x64\\runner\\Release\\'; \
-"

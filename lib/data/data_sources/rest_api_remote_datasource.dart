@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:legion/core/env.dart';
 import 'package:legion/data/models/command_dto.dart';
 import 'package:legion/data/models/reply_dto.dart';
 
@@ -11,7 +12,7 @@ class RestApiRemoteDataSource implements IRestApiRemoteDataSource {
 
   RestApiRemoteDataSource(this._dio) {
     _dio.options = BaseOptions(
-      baseUrl: "http://127.0.0.1:8000",
+      baseUrl: Env.http,
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 30),
       headers: {'Content-Type': 'application/json'},

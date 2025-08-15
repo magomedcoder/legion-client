@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:legion/core/env.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
 abstract class IWsRemoteDataSource {
@@ -18,9 +19,7 @@ class WsRemoteDataSource implements IWsRemoteDataSource {
 
   @override
   Stream connectStream() {
-    _channel = WebSocketChannel.connect(
-      Uri.parse("ws://127.0.0.1:8000/ws/asr/stream"),
-    );
+    _channel = WebSocketChannel.connect(Uri.parse("${Env.ws}/ws/asr/stream"));
     return _channel!.stream;
   }
 
