@@ -1,7 +1,7 @@
 # Legion
 
 ```bash
-docker build --target linux-build -t flutter-linux --platform=linux/amd64 .
+docker build --target linux-build -t flutter-linux .
 docker run --rm -e TARGETS=linux,android -v "$PWD/build/docker":/opt/legion/build flutter-linux
 
 # Нужен Windows

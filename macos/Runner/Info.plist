@@ -28,5 +28,7 @@
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
+	<key>NSMicrophoneUsageDescription</key>
+    <string>Нам нужен доступ к микрофону для голосового ввода</string>
 </dict>
 </plist>

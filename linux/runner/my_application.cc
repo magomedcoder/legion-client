@@ -5,6 +5,8 @@
 #include <gdk/gdkx.h>
 #endif
 
+#include <gdk-pixbuf/gdk-pixbuf.h>
+#include <gdk-pixbuf/gdk-pixbuf.h>
 #include "flutter/generated_plugin_registrant.h"
 
 struct _MyApplication {
@@ -19,6 +21,14 @@ static void my_application_activate(GApplication* application) {
   MyApplication* self = MY_APPLICATION(application);
   GtkWindow* window =
       GTK_WINDOW(gtk_application_window_new(GTK_APPLICATION(application)));
+
+  GdkPixbuf *icon = gdk_pixbuf_new_from_file("linux/runner/resources/app_icon.png", nullptr);
+  if (icon != nullptr) {
+    gtk_window_set_icon(window, icon);
+    g_object_unref(icon);
+  } else {
+    g_warning("Не удалось загрузить иконку из linux/runner/resources/app_icon.png");
+  }
 
   // Use a header bar when running in GNOME as this is the common style used
   // by applications and is the setup most users will be using (e.g. Ubuntu
@@ -47,7 +57,7 @@ static void my_application_activate(GApplication* application) {
     gtk_window_set_title(window, "legion");
   }
 
-  gtk_window_set_default_size(window, 1280, 720);
+  gtk_window_set_default_size(window, 450, 650);
   gtk_widget_show(GTK_WIDGET(window));
 
   g_autoptr(FlDartProject) project = fl_dart_project_new();
