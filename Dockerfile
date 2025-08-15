@@ -5,9 +5,9 @@ ARG ANDROID_PLATFORM=android-35
 ARG ANDROID_BUILD_TOOLS=35.0.0
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt update && apt install -y --no-install-recommends curl git unzip xz-utils zip \
-    ca-certificates build-essential clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev \
-    libstdc++6 openjdk-17-jdk-headless libglu1-mesa \
+RUN apt update && apt install -y --no-install-recommends ca-certificates build-essential curl git \
+    unzip xz-utils zip clang cmake ninja-build pkg-config libgtk-3-dev liblzma-dev libstdc++6 \
+    openjdk-17-jdk-headless libglu1-mesa libgtk-3-dev libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev\
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -64,7 +64,7 @@ CMD bash -lc '\
     fi; \
 
     echo "Linux: build/linux/x64/release/bundle/"; \
-    echo "Android APK:  build/app/outputs/flutter-apk/app-release.apk"; \
+    echo "Android APK: build/app/outputs/flutter-apk/app-release.apk"; \
 '
 
 # Windows

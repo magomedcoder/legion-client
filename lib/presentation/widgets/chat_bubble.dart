@@ -8,13 +8,39 @@ class ChatBubble extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final base = Theme.of(context);
+    final cs = base.colorScheme.copyWith(
+      primaryContainer: const Color(0xFF202124),
+      onPrimaryContainer: Colors.white,
+      secondaryContainer: const Color(0xFF1A1A1A),
+      onSecondaryContainer: Colors.white,
+    );
+    final isUser = message.author == MessageAuthor.user;
     return Align(
+      alignment: isUser ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
         padding: const EdgeInsets.all(12),
         constraints: const BoxConstraints(maxWidth: 360),
+        decoration: BoxDecoration(
+          color: isUser ? cs.primaryContainer : cs.secondaryContainer,
+          borderRadius: BorderRadius.circular(12),
+        ),
         child: Column(
-          children: [if (message.text != null) Text(message.text!)],
+          crossAxisAlignment: isUser
+              ? CrossAxisAlignment.end
+              : CrossAxisAlignment.start,
+          children: [
+            if (message.text != null)
+              Text(
+                message.text!,
+                style: TextStyle(
+                  color: isUser
+                      ? cs.onPrimaryContainer
+                      : cs.onSecondaryContainer,
+                ),
+              ),
+          ],
         ),
       ),
     );

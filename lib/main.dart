@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:legion/core/theme.dart';
 import 'package:legion/di/injector.dart' as di;
 import 'package:legion/presentation/bloc/chat_bloc.dart';
 import 'package:legion/presentation/screens/home_screen.dart';
@@ -19,6 +20,7 @@ class App extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Легион',
+      theme: theme,
       home: MultiBlocProvider(
         providers: [BlocProvider(create: (context) => di.sl<ChatBloc>())],
         child: const HomeScreen(),

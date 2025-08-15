@@ -18,30 +18,43 @@ class ChatInputBar extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
         child: Row(
           children: [
-            Expanded(child: TextField(controller: controller)),
+            Expanded(
+              child: TextField(
+                controller: controller,
+                minLines: 1,
+                maxLines: 4,
+                decoration: const InputDecoration(
+                  hintText: 'Напишите команду…',
+                  border: OutlineInputBorder(),
+                  isDense: true,
+                ),
+              ),
+            ),
             const SizedBox(width: 8),
             BlocBuilder<ChatBloc, ChatState>(
               builder: (context, state) {
                 return Row(
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        final text = controller.text.trim();
-                        context.read<ChatBloc>().add(ChatSendTextPressed(text));
-                        controller.clear();
-                      },
-                      child: Text("Отправить"),
-                    ),
-                    ElevatedButton(
+                    IconButton.filled(
                       onPressed: () {
                         context.read<ChatBloc>().add(MicVoice());
                       },
-                      child: Text(
-                        state.isRecording ? "Остановить" : "Микрофон",
-                      ),
+                      icon: state.isRecording
+                          ? const Icon(Icons.mic_off)
+                          : const Icon(Icons.mic),
                     ),
                     if (state.wavBase64 != null)
                       AudioPlayerWidget(base64Str: state.wavBase64!),
+                    const SizedBox(width: 8),
+                    IconButton.filled(
+                      onPressed: () {
+                        final text = controller.text.trim();
+                        if (text.isEmpty) return;
+                        context.read<ChatBloc>().add(ChatSendTextPressed(text));
+                        controller.clear();
+                      },
+                      icon: const Icon(Icons.send),
+                    ),
                   ],
                 );
               },
