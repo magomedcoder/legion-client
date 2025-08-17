@@ -35,9 +35,9 @@ COPY . .
 
 RUN flutter pub get
 
+RUN mkdir -p out
+
 CMD powershell -NoProfile -Command \
-    "flutter pub get; \
-    Write-Host '==> Building Windows desktop'; \
+    "Write-Host '==> Building Windows'; \
     flutter build windows --release; \
-    Write-Host ''; \
-    Write-Host 'Windows: build\\windows\\x64\\runner\\Release\\'; \
+    Copy-Item -Path 'build\windows\*' -Destination 'C:\legion\out' -Recurse;"
