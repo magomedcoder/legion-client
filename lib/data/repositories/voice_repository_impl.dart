@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -12,7 +13,10 @@ class VoiceRepositoryImpl implements VoiceRepository {
   VoiceRepositoryImpl(this.remote);
 
   final AudioRecorder _recorder = AudioRecorder();
-  Stream<Uint8List>? _streamSub;
+
+  StreamSubscription<dynamic>? _wsSub;
+  StreamSubscription<Uint8List>? _audioSub;
+  bool _active = false;
 
   @override
   Future<void> startRecording(Function(VoiceResult result) onResult) async {
@@ -20,11 +24,23 @@ class VoiceRepositoryImpl implements VoiceRepository {
       throw Exception("Нет разрешения на использование микрофона");
     }
 
-    remote.connectStream().listen((event) {
-      final json = jsonDecode(event);
-      final result = VoiceResult(wavBase64: json['wav_base64']);
-      onResult(result);
-    });
+    _active = true;
+
+    _wsSub?.cancel();
+    final wsStream = remote.connectAsrStream();
+    _wsSub = wsStream.listen((event) {
+      if (!_active) return;
+
+      final map = event is String
+          ? jsonDecode(event) as Map<String, dynamic>
+          : Map<String, dynamic>.from(event as Map);
+
+      final heard = (map['heard'] ?? map['asr'] ?? map['utterance']) as String?;
+      final replyText = map['text'] as String?;
+      final wav = map['wav_base64'] as String?;
+
+      onResult(VoiceResult(heard: heard, text: replyText, wavBase64: wav));
+    }, onError: (_) {});
 
     final stream = await _recorder.startStream(
       RecordConfig(
@@ -35,16 +51,29 @@ class VoiceRepositoryImpl implements VoiceRepository {
       ),
     );
 
-    _streamSub = stream;
-    _streamSub!.listen((data) {
+    _audioSub?.cancel();
+    _audioSub = stream.listen((data) {
+      if (!_active) return;
       remote.sendBytes(data);
     });
   }
 
   @override
   Future<void> stopRecording() async {
-    await _recorder.stop();
-    await _recorder.dispose();
-    remote.disconnect();
+    _active = false;
+    try {
+      await _audioSub?.cancel();
+      await _wsSub?.cancel();
+    } finally {
+      _audioSub = null;
+      _wsSub = null;
+      try {
+        await _recorder.stop();
+      } catch (_) {}
+      try {
+        await _recorder.dispose();
+      } catch (_) {}
+      await remote.disconnect();
+    }
   }
 }

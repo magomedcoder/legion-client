@@ -7,6 +7,7 @@ class ChatState extends Equatable {
   final List<Message> messages;
   final String? wavBase64;
   final String? error;
+  final bool healthy;
 
   const ChatState({
     this.wsConnected = false,
@@ -14,6 +15,7 @@ class ChatState extends Equatable {
     this.messages = const [],
     this.wavBase64,
     this.error,
+    this.healthy = false,
   });
 
   ChatState copyWith({
@@ -22,12 +24,14 @@ class ChatState extends Equatable {
     List<Message>? messages,
     String? wavBase64,
     String? error,
+    bool? healthy,
   }) => ChatState(
     wsConnected: wsConnected ?? this.wsConnected,
     isRecording: isRecording ?? this.isRecording,
     messages: messages ?? this.messages,
     wavBase64: wavBase64 ?? this.wavBase64,
     error: error,
+    healthy: healthy ?? this.healthy,
   );
 
   @override
@@ -37,5 +41,6 @@ class ChatState extends Equatable {
     messages,
     wavBase64,
     error,
+    healthy,
   ];
 }

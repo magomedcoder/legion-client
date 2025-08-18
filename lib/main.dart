@@ -17,13 +17,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Легион',
-      theme: theme,
-      home: MultiBlocProvider(
-        providers: [BlocProvider(create: (context) => di.sl<ChatBloc>())],
-        child: const HomeScreen(),
+    return MultiBlocProvider(
+      providers: [BlocProvider(create: (_) => di.sl<ChatBloc>())],
+      child: MaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Легион',
+        theme: theme,
+        home: const HomeScreen(),
       ),
     );
   }

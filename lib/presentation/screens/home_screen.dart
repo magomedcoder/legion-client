@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legion/presentation/bloc/chat_bloc.dart';
 import 'package:legion/presentation/bloc/chat_state.dart';
+import 'package:legion/presentation/screens/dev_tools_screen.dart';
 import 'package:legion/presentation/widgets/chat_bubble.dart';
 import 'package:legion/presentation/widgets/chat_input_bar.dart';
 
@@ -18,7 +19,26 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Легион')),
+      appBar: AppBar(
+        title: const Text('Легион'),
+        actions: [
+          IconButton(
+            tooltip: 'Панель разработчика',
+            onPressed: () {
+              final chatBloc = context.read<ChatBloc>();
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => BlocProvider.value(
+                    value: chatBloc,
+                    child: const DevToolsScreen(),
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.developer_mode),
+          ),
+        ],
+      ),
       body: SafeArea(
         child: Column(
           children: [

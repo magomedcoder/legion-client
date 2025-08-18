@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:legion/domain/entities/message.dart';
+import 'package:legion/presentation/widgets/audio_player_widget.dart';
 
 class ChatBubble extends StatelessWidget {
   final Message message;
@@ -39,6 +40,11 @@ class ChatBubble extends StatelessWidget {
                       ? cs.onPrimaryContainer
                       : cs.onSecondaryContainer,
                 ),
+              ),
+            if (message.wavBase64 != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: AudioPlayerWidget(base64Str: message.wavBase64!),
               ),
           ],
         ),
