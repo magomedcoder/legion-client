@@ -3,7 +3,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:legion/core/theme.dart';
 import 'package:legion/di/injector.dart' as di;
 import 'package:legion/presentation/bloc/chat_bloc.dart';
-import 'package:legion/presentation/screens/home_screen.dart';
+import 'package:legion/presentation/screens/chat_screen.dart';
+import 'package:legion/presentation/screens/dev_tools_screen.dart';
+import 'package:legion/presentation/screens/menu_screen.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,7 +25,11 @@ class App extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Легион',
         theme: theme,
-        home: const HomeScreen(),
+        home: const MenuScreen(),
+        routes: {
+          '/chat': (_) => const ChatScreen(),
+          '/devtools': (_) => const DevToolsScreen(),
+        },
       ),
     );
   }

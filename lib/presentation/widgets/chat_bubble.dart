@@ -4,8 +4,9 @@ import 'package:legion/presentation/widgets/audio_player_widget.dart';
 
 class ChatBubble extends StatelessWidget {
   final Message message;
+  final bool muted;
 
-  const ChatBubble({super.key, required this.message});
+  const ChatBubble({super.key, required this.message, this.muted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -41,7 +42,7 @@ class ChatBubble extends StatelessWidget {
                       : cs.onSecondaryContainer,
                 ),
               ),
-            if (message.wavBase64 != null)
+            if (message.wavBase64 != null && !muted)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: AudioPlayerWidget(base64Str: message.wavBase64!),
