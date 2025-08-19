@@ -1,4 +1,3 @@
-// lib/di/injector.dart
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:legion/data/data_sources/rest_api_remote_datasource.dart';
@@ -6,6 +5,7 @@ import 'package:legion/data/data_sources/ws_remote_datasource.dart';
 import 'package:legion/data/repositories/chat_repository_impl.dart';
 import 'package:legion/data/repositories/health_repository_impl.dart';
 import 'package:legion/data/repositories/nlu_repository_impl.dart';
+import 'package:legion/data/repositories/stt_repository_impl.dart';
 import 'package:legion/data/repositories/tts_repository_impl.dart';
 import 'package:legion/data/repositories/voice_repository_impl.dart';
 import 'package:legion/data/repositories/ws_command_repository_impl.dart';
@@ -13,6 +13,7 @@ import 'package:legion/data/repositories/ws_utterance_repository_impl.dart';
 import 'package:legion/domain/repositories/chat_repository.dart';
 import 'package:legion/domain/repositories/health_repository.dart';
 import 'package:legion/domain/repositories/nlu_repository.dart';
+import 'package:legion/domain/repositories/stt_repository.dart';
 import 'package:legion/domain/repositories/tts_repository.dart';
 import 'package:legion/domain/repositories/voice_repository.dart';
 import 'package:legion/domain/repositories/ws_command_repository.dart';
@@ -23,9 +24,11 @@ import 'package:legion/domain/usecases/send_utterance_usecase.dart';
 import 'package:legion/domain/usecases/start_voice_stream_usecase.dart';
 import 'package:legion/domain/usecases/stop_voice_stream_usecase.dart';
 import 'package:legion/domain/usecases/synthesize_usecase.dart';
+import 'package:legion/domain/usecases/upload_stt_speaker_usecase.dart';
 import 'package:legion/domain/usecases/ws_commands_usecases.dart';
 import 'package:legion/domain/usecases/ws_utterances_usecases.dart';
 import 'package:legion/presentation/bloc/chat_bloc.dart';
+import 'package:legion/presentation/bloc/stt_cubit.dart';
 
 final sl = GetIt.instance;
 
@@ -48,6 +51,7 @@ Future<void> init() async {
   sl.registerLazySingleton<WsUtteranceRepository>(
     () => WsUtteranceRepositoryImpl(sl()),
   );
+  sl.registerLazySingleton<SttRepository>(() => SttRepositoryImpl(sl()));
 
   sl.registerFactory(() => StartVoiceStreamUseCase(sl()));
   sl.registerFactory(() => StopVoiceStreamUseCase(sl()));
@@ -61,6 +65,7 @@ Future<void> init() async {
   sl.registerFactory(() => ConnectWsUtterancesUseCase(sl()));
   sl.registerFactory(() => SendWsUtteranceUseCase(sl()));
   sl.registerFactory(() => DisconnectWsUtterancesUseCase(sl()));
+  sl.registerFactory(() => UploadSttSpeakerUseCase(sl()));
 
   sl.registerFactory(
     () => ChatBloc(
@@ -78,4 +83,5 @@ Future<void> init() async {
       sl(),
     ),
   );
+  sl.registerFactory(() => SttCubit(sl()));
 }

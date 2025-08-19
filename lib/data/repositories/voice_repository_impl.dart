@@ -8,9 +8,9 @@ import 'package:legion/domain/repositories/voice_repository.dart';
 import 'package:record/record.dart';
 
 class VoiceRepositoryImpl implements VoiceRepository {
-  final WsRemoteDataSource remote;
+  final WsRemoteDataSource wsRemoteDataSource;
 
-  VoiceRepositoryImpl(this.remote);
+  VoiceRepositoryImpl(this.wsRemoteDataSource);
 
   final AudioRecorder _recorder = AudioRecorder();
 
@@ -27,7 +27,7 @@ class VoiceRepositoryImpl implements VoiceRepository {
     _active = true;
 
     _wsSub?.cancel();
-    final wsStream = remote.connectAsrStream();
+    final wsStream = wsRemoteDataSource.connectAsrStream();
     _wsSub = wsStream.listen((event) {
       if (!_active) return;
 
@@ -54,7 +54,7 @@ class VoiceRepositoryImpl implements VoiceRepository {
     _audioSub?.cancel();
     _audioSub = stream.listen((data) {
       if (!_active) return;
-      remote.sendBytes(data);
+      wsRemoteDataSource.sendBytes(data);
     });
   }
 
@@ -73,7 +73,7 @@ class VoiceRepositoryImpl implements VoiceRepository {
       try {
         await _recorder.dispose();
       } catch (_) {}
-      await remote.disconnect();
+      await wsRemoteDataSource.disconnect();
     }
   }
 }

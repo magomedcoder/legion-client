@@ -52,4 +52,32 @@ final ThemeData theme = ThemeData(
       foregroundColor: WidgetStateProperty.all(Colors.white),
     ),
   ),
+
+  textButtonTheme: TextButtonThemeData(
+    style: ButtonStyle(foregroundColor: WidgetStateProperty.all(Colors.white)),
+  ),
+
+  filledButtonTheme: FilledButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.white.withOpacity(0.18);
+        }
+        return Colors.white.withOpacity(0.12);
+      }),
+      foregroundColor: WidgetStateProperty.all(Colors.white),
+    ),
+  ),
+
+  outlinedButtonTheme: OutlinedButtonThemeData(
+    style: ButtonStyle(
+      backgroundColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.pressed)) {
+          return Colors.white.withOpacity(0.18);
+        }
+        return Colors.white.withOpacity(0.12);
+      }),
+      foregroundColor: WidgetStateProperty.all(Colors.white),
+    ),
+  ),
 );

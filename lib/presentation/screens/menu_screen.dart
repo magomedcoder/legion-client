@@ -22,6 +22,12 @@ class MenuScreen extends StatelessWidget {
                 onTap: () => Navigator.of(context).pushNamed('/chat'),
               ),
               _MenuCard(
+                icon: Icons.graphic_eq,
+                title: 'STT спикеры',
+                subtitle: 'Загрузить аудио и распознать',
+                onTap: () => Navigator.of(context).pushNamed('/stt-speaker'),
+              ),
+              _MenuCard(
                 icon: Icons.developer_mode,
                 title: 'Панель разработчика',
                 subtitle: 'HTTP и WebSocket проверки',

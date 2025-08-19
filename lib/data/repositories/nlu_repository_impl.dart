@@ -5,16 +5,16 @@ import 'package:legion/domain/repositories/nlu_repository.dart';
 import 'package:legion/domain/value_objects.dart';
 
 class NluRepositoryImpl implements NluRepository {
-  final RestApiRemoteDataSource ds;
+  final RestApiRemoteDataSource restApiRemoteDataSource;
 
-  NluRepositoryImpl(this.ds);
+  NluRepositoryImpl(this.restApiRemoteDataSource);
 
   @override
   Future<ReplyDto> sendUtterance(
     String text, {
     ReplyFormat format = ReplyFormat.saytxt,
   }) async {
-    return ds.postUtterance(
+    return restApiRemoteDataSource.postUtterance(
       UtteranceRequestDto(text: text, format: format.apiValue),
     );
   }
